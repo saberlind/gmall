@@ -15,7 +15,7 @@ public class CorsConfig {
 
     @Bean
     public CorsWebFilter corsWebFilter(){
-        // 初始化一个配置类
+        // 初始化一个配置对象
         CorsConfiguration configuration = new CorsConfiguration();
         // 允许跨域访问的域名。*-允许所有，建议不要写*,原因：1-不够安全  2-不能携带cookie
         configuration.addAllowedOrigin("http://api.saberlind.club");

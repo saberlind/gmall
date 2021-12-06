@@ -1,24 +1,28 @@
 package com.atguigu.gmall.pms.service.impl;
 
 import com.atguigu.gmall.pms.entity.*;
+import com.atguigu.gmall.pms.feign.GmallSmsClient;
 import com.atguigu.gmall.pms.mapper.*;
 import com.atguigu.gmall.pms.service.SkuAttrValueService;
 import com.atguigu.gmall.pms.service.SkuImagesService;
 import com.atguigu.gmall.pms.service.SpuAttrValueService;
+import com.atguigu.gmall.sms.vo.SkuSaleVo;
 import com.atguigu.gmall.pms.vo.SkuVo;
 import com.atguigu.gmall.pms.vo.SpuAttrVo;
 import com.atguigu.gmall.pms.vo.SpuVo;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -28,8 +32,9 @@ import com.atguigu.gmall.common.bean.PageResultVo;
 import com.atguigu.gmall.common.bean.PageParamVo;
 
 import com.atguigu.gmall.pms.service.SpuService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import sun.swing.StringUIClientPropertyKey;
 
 
 @Service("spuService")
@@ -45,6 +50,8 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
     private SkuImagesService skuImagesService;
     @Autowired
     private SkuAttrValueService skuAttrValueService;
+    @Autowired
+    private GmallSmsClient gmallSmsClient;
 
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
@@ -70,40 +77,30 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         return new PageResultVo(this.page(pageParamVo.getPage(), queryWrapper));
     }
 
+    @GlobalTransactional
     @Override
-    public void bigSave(SpuVo spu) {
+    public void bigSave(SpuVo spu){
         // 1.保存spu相关信息
         // 1.1保存pms_spu
-        spu.setCreateTime(new Date());
-        spu.setUpdateTime(spu.getCreateTime());
-        this.save(spu);
-        Long spuId = spu.getId();
+        Long spuId = saveSpu(spu);
+
         // 1.2保存pms_spu_desc
-        List<String> spuImages = spu.getSpuImages();
-        //isBlank的话空格也视为空
-        if (!CollectionUtils.isEmpty(spuImages)) {
-            SpuDescEntity spuDescEntity = new SpuDescEntity();
-            spuDescEntity.setSpuId(spuId);
-            spuDescEntity.setDecript(StringUtils.join(spuImages, ","));
-            this.spuDescMapper.insert(spuDescEntity);
-        }
+        SpuService spuService = (SpuService) AopContext.currentProxy();
+        spuService.saveSpuDesc(spu, spuId);
         // 1.3保存pms_spu_attr_value信息
-        List<SpuAttrVo> baseAttrs = spu.getBaseAttrs();
-        if (!CollectionUtils.isEmpty(baseAttrs)) {
-            /*for (SpuAttrVo baseAttr : baseAttrs) {
-                baseAttr.setSpuId(spuId);
-                spuAttrValueMapper.insert(baseAttr);
-            }*/
-            // 更高效的集合迭代器：流
-            this.spuAttrValueService.saveBatch(baseAttrs.stream().map(spuAttrVo -> {
-                SpuAttrValueEntity spuAttrValueEntity = new SpuAttrValueEntity();
-                BeanUtils.copyProperties(spuAttrVo, spuAttrValueEntity);
-                spuAttrValueEntity.setSpuId(spuId);
-                // return spuAttrVo; 子类的spuId为null
-                return spuAttrValueEntity;
-            }).collect(Collectors.toList()));
-        }
+        saveBaseAttr(spu, spuId);
+
         // 2.保存sku相关信息
+        saveSku(spu);
+        // FileInputStream xxx = new FileInputStream("xxx");
+        int i = 1/0;
+    }
+    /**
+     * 保存sku相关信息及营销信息
+     * @param spu
+     */
+    @Override
+    public void saveSku(SpuVo spu) {
         List<SkuVo> skus = spu.getSkus();
         if (CollectionUtils.isEmpty(skus)) {
             return;
@@ -138,11 +135,67 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
                 }
                 this.skuAttrValueService.saveBatch(saleAttrs);
             }
+            // 3.保存营销相关信息
+            SkuSaleVo skuSaleVo = new SkuSaleVo();
+            BeanUtils.copyProperties(skuVo,skuSaleVo);
+            skuSaleVo.setSkuId(skuId);
+            this.gmallSmsClient.skuSaleSave(skuSaleVo);
         }
-        // 3.保存营销相关信息
     }
-    public static void main(String[] args) {
+    /**
+     * 保存spu基本属性信息
+     * @param spu,spuId
+     */
+    @Override
+    public void saveBaseAttr(SpuVo spu, Long spuId) {
+        List<SpuAttrVo> baseAttrs = spu.getBaseAttrs();
+        if (!CollectionUtils.isEmpty(baseAttrs)) {
+            /*for (SpuAttrVo baseAttr : baseAttrs) {
+                baseAttr.setSpuId(spuId);
+                spuAttrValueMapper.insert(baseAttr);
+            }*/
+            // 更高效的集合迭代器：流
+            this.spuAttrValueService.saveBatch(baseAttrs.stream().map(spuAttrVo -> {
+                SpuAttrValueEntity spuAttrValueEntity = new SpuAttrValueEntity();
+                BeanUtils.copyProperties(spuAttrVo, spuAttrValueEntity);
+                spuAttrValueEntity.setSpuId(spuId);
+                // return spuAttrVo; 子类的spuId为null
+                return spuAttrValueEntity;
+            }).collect(Collectors.toList()));
+        }
+    }
+    /**
+     * 保存spu描述信息（图片）
+     * @param spu,spuId
+     */
+    @Override
+    public void saveSpuDesc(SpuVo spu, Long spuId) {
+        List<String> spuImages = spu.getSpuImages();
+        //isBlank的话空格也视为空
+        if (!CollectionUtils.isEmpty(spuImages)) {
+            SpuDescEntity spuDescEntity = new SpuDescEntity();
+            spuDescEntity.setSpuId(spuId);
+            spuDescEntity.setDecript(StringUtils.join(spuImages, ","));
+            this.spuDescMapper.insert(spuDescEntity);
+        }
+    }
+    /**
+     * 保存spu基本信息
+     * @param spu
+     */
+    @Override
+    public Long saveSpu(SpuVo spu) {
+        spu.setCreateTime(new Date());
+        spu.setUpdateTime(spu.getCreateTime());
+        this.save(spu);
+        Long spuId = spu.getId();
+        return spuId;
+    }
 
+
+
+
+    public static void main(String[] args) {
         List<User> users = Arrays.asList(
                 new User("柳岩", 20, false),
                 new User("马蓉", 21, false),
