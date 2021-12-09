@@ -16,7 +16,12 @@ spring:
       type: web
   elasticsearch:
     rest:
-      uris: http://192.168.1.200:9200
+      #uris: http://192.168.1.200:9200
+      uris: http://42.192.128.199:9200
+  jackson:
+    default-property-inclusion: non_null
+  thymeleaf:
+    cache: false
 feign:
   sentinel:
     enabled: true

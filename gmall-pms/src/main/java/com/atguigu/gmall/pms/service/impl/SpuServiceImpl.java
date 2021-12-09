@@ -93,7 +93,7 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         // 2.保存sku相关信息
         saveSku(spu);
         // FileInputStream xxx = new FileInputStream("xxx");
-        int i = 1/0;
+        //int i = 1/0;
     }
     /**
      * 保存sku相关信息及营销信息

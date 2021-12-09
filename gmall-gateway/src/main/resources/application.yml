@@ -30,4 +30,5 @@ spring:
         - id: search-route
           uri: lb://search-service
           predicates:
-            - Host=search.gmall.com
+            #- Host=search.saberlind.club
+            - Path=/search

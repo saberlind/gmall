@@ -2,6 +2,7 @@ package com.atguigu.gmall.search.pojo;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -19,7 +20,7 @@ import java.util.List;
 public class Goods {
 
     @Id
-    private Long id;
+    private Long skuId;
     @Field(type= FieldType.Text,analyzer = "ik_max_word")
     private String title;
     @Field(type = FieldType.Keyword,index = false)
@@ -32,7 +33,7 @@ public class Goods {
     // 排序及过滤
     @Field(type = FieldType.Long)
     private Long sale = 0L;
-    @Field(type = FieldType.Date)
+    @Field(type = FieldType.Date,format = DateFormat.date_time)
     private Date createTime;
     @Field(type = FieldType.Boolean)
     private Boolean store = false;
