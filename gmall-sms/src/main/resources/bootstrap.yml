@@ -7,4 +7,4 @@ spring:
         server-addr: localhost:8848
         namespace: 97be75de-006f-4566-b7a0-42043d79ab52
         group: dev
-        file-extension: yml
+        file-extension: yaml

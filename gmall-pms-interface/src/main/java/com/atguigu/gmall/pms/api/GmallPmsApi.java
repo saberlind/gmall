@@ -15,6 +15,10 @@ import java.util.List;
  */
 
 public interface GmallPmsApi {
+
+    @GetMapping("pms/spu/{id}")
+    public ResponseVo<SpuEntity> querySpuById(@PathVariable("id") Long id);
+
     @PostMapping("pms/spu/page")
     public ResponseVo<List<SpuEntity>> querySpuByPageJson(@RequestBody PageParamVo paramVo);
 
@@ -22,18 +26,19 @@ public interface GmallPmsApi {
     public ResponseVo<List<SkuEntity>> querySkuBySpuId(@PathVariable("spuId")Long spuId);
 
     @GetMapping("pms/brand/{id}")
-    public ResponseVo<BrandEntity> queryBrandById(@PathVariable("id") Long id);
+    ResponseVo<BrandEntity> queryBrandById(@PathVariable("id") Long id);
+
     @GetMapping("pms/category/{id}")
-    public ResponseVo<CategoryEntity> queryCategoryById(@PathVariable("id") Long id);
+    ResponseVo<CategoryEntity> queryCategoryById(@PathVariable("id") Long id);
 
     @GetMapping("pms/spuattrvalue/category/{cid}")
-    public ResponseVo<List<SpuAttrValueEntity>> querySpuAttrValueByCidAndSpuId(
+    ResponseVo<List<SpuAttrValueEntity>> querySpuAttrValueByCidAndSpuId(
             @PathVariable("cid")Long cid,
             @RequestParam("spuId") Long spuId
     );
 
     @GetMapping("pms/skuattrvalue/category/{cid}")
-    public ResponseVo<List<SkuAttrValueEntity>> querySkuAttrValueByCidAndSkuId(
+    ResponseVo<List<SkuAttrValueEntity>> querySkuAttrValueByCidAndSkuId(
             @PathVariable("cid")Long cid,
             @RequestParam("skuId") Long skuId
     );

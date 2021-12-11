@@ -10,7 +10,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  */
 @Data
 public class SearchAttrValueVo {
-
     @Field(type = FieldType.Long)
     private Long attrId;
     @Field(type = FieldType.Keyword)

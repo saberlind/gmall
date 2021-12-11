@@ -26,6 +26,7 @@ public class SearchResponseVo {
     private Integer pageNum;
     private Integer pageSize;
     private Long Total;
+
     // 当前页的商品列表
     private List<Goods> goodsList;
 }

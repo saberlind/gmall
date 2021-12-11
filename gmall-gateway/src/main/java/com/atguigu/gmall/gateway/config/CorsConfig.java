@@ -20,6 +20,7 @@ public class CorsConfig {
         // 允许跨域访问的域名。*-允许所有，建议不要写*,原因：1-不够安全  2-不能携带cookie
         configuration.addAllowedOrigin("http://api.saberlind.club");
         configuration.addAllowedOrigin("http://man.saberlind.club");
+        configuration.addAllowedOrigin("http://api.gmall.com");
         // 允许跨域访问的方法
         configuration.addAllowedMethod("*");
         // 允许携带的请求头消息

@@ -14,7 +14,10 @@ import io.seata.spring.annotation.GlobalTransactional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,7 @@ import org.springframework.util.CollectionUtils;
 
 
 @Service("spuService")
+@Slf4j
 public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements SpuService {
 
     @Autowired
@@ -52,13 +56,12 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
     private SkuAttrValueService skuAttrValueService;
     @Autowired
     private GmallSmsClient gmallSmsClient;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
-        IPage<SpuEntity> page = this.page(
-                paramVo.getPage(),
-                new QueryWrapper<SpuEntity>()
-        );
+        IPage<SpuEntity> page = this.page(paramVo.getPage(),new QueryWrapper<SpuEntity>());
         return new PageResultVo(page);
     }
 
@@ -94,6 +97,7 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         saveSku(spu);
         // FileInputStream xxx = new FileInputStream("xxx");
         //int i = 1/0;
+        sendMessage(spu.getId(),"insert");
     }
     /**
      * 保存sku相关信息及营销信息
@@ -192,8 +196,14 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         return spuId;
     }
 
-
-
+    public void sendMessage(Long spuId,String type){
+        try {
+            // 发送消息
+            this.rabbitTemplate.convertAndSend("PMS_SPU_EXCHANGE","item." + type , spuId);
+        } catch (AmqpException e) {
+            log.error("{}商品消息发送异常，商品id:{}",type,spuId);
+        }
+    }
 
     public static void main(String[] args) {
         List<User> users = Arrays.asList(
