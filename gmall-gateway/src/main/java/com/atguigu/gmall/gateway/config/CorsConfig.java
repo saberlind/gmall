@@ -21,6 +21,7 @@ public class CorsConfig {
         configuration.addAllowedOrigin("http://api.saberlind.club");
         configuration.addAllowedOrigin("http://man.saberlind.club");
         configuration.addAllowedOrigin("http://api.gmall.com");
+        configuration.addAllowedOrigin("http://index.saberlind.club");
         // 允许跨域访问的方法
         configuration.addAllowedMethod("*");
         // 允许携带的请求头消息

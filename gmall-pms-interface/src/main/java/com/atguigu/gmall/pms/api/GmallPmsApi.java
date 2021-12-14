@@ -16,6 +16,9 @@ import java.util.List;
 
 public interface GmallPmsApi {
 
+    @GetMapping("pms/category/parent/{parentId}")
+    public ResponseVo<List<CategoryEntity>> queryCategoriesByPid(@PathVariable("parentId") Long parentId);
+
     @GetMapping("pms/spu/{id}")
     public ResponseVo<SpuEntity> querySpuById(@PathVariable("id") Long id);
 
@@ -42,4 +45,7 @@ public interface GmallPmsApi {
             @PathVariable("cid")Long cid,
             @RequestParam("skuId") Long skuId
     );
+
+    @GetMapping("pms/category/sub/all/{pid}")
+    ResponseVo<List<CategoryEntity>> queryLv23CategoriesByPid(@PathVariable("pid")Long pid);
 }

@@ -34,6 +34,11 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @GetMapping("sub/all/{pid}")
+    public ResponseVo<List<CategoryEntity>> queryLv23CategoriesByPid(@PathVariable("pid")Long pid){
+        List<CategoryEntity> categoryEntities = this.categoryService.queryLv23CategoriesByPid(pid);
+        return ResponseVo.ok(categoryEntities);
+    }
 
     /*
     *  父分类列表
