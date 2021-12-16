@@ -41,7 +41,50 @@ public class IndexController {
     public ResponseVo testLock() throws InterruptedException {
         // this.indexService.testLock();
         // this.indexService.testReInLock();
-        this.indexService.testRedission();
+        //this.indexService.testRedission();
+        String s = this.indexService.testReentrantLock();
+        return ResponseVo.ok(s);
+    }
+
+    @GetMapping("/index/test/rlock")
+    @ResponseBody
+    public ResponseVo testReadLock() throws InterruptedException {
+        this.indexService.testReadLock();
         return ResponseVo.ok();
+    }
+
+    @GetMapping("/index/test/wlock")
+    @ResponseBody
+    public ResponseVo testWriteLock() throws InterruptedException {
+        this.indexService.testWriteLock();
+        return ResponseVo.ok();
+    }
+
+    @GetMapping("/index/test/s1lock")
+    @ResponseBody
+    public ResponseVo tests1Lock() throws InterruptedException {
+        this.indexService.testSemaphore1();
+        return ResponseVo.ok("s1");
+    }
+
+    @GetMapping("/index/test/s2lock")
+    @ResponseBody
+    public ResponseVo tests2Lock() throws InterruptedException {
+        this.indexService.testSemaphore2();
+        return ResponseVo.ok("s2");
+    }
+
+    @GetMapping("/index/test/latch")
+    @ResponseBody
+    public ResponseVo testLatch() throws InterruptedException {
+        this.indexService.testLatch();
+        return ResponseVo.ok("latch");
+    }
+
+    @GetMapping("/index/test/out")
+    @ResponseBody
+    public ResponseVo testOut() throws InterruptedException {
+        this.indexService.testCountDown();
+        return ResponseVo.ok("out");
     }
 }

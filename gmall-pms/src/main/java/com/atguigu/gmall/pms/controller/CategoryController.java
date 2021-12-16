@@ -1,6 +1,7 @@
 package com.atguigu.gmall.pms.controller;
 
 import java.util.List;
+import java.util.Locale;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +35,12 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @GetMapping("all/{id}")
+    public ResponseVo<List<CategoryEntity>> queryLv123categoriesById(@PathVariable("id")Long id){
+        List<CategoryEntity> categories = this.categoryService.queryLv123categoriesById(id);
+        return ResponseVo.ok(categories);
+    }
+
     @GetMapping("sub/all/{pid}")
     public ResponseVo<List<CategoryEntity>> queryLv23CategoriesByPid(@PathVariable("pid")Long pid){
         List<CategoryEntity> categoryEntities = this.categoryService.queryLv23CategoriesByPid(pid);
@@ -57,7 +64,6 @@ public class CategoryController {
     @ApiOperation("分页查询")
     public ResponseVo<PageResultVo> queryCategoryByPage(PageParamVo paramVo){
         PageResultVo pageResultVo = categoryService.queryPage(paramVo);
-
         return ResponseVo.ok(pageResultVo);
     }
 
@@ -69,7 +75,6 @@ public class CategoryController {
     @ApiOperation("详情查询")
     public ResponseVo<CategoryEntity> queryCategoryById(@PathVariable("id") Long id){
 		CategoryEntity category = categoryService.getById(id);
-
         return ResponseVo.ok(category);
     }
 
@@ -80,7 +85,6 @@ public class CategoryController {
     @ApiOperation("保存")
     public ResponseVo<Object> save(@RequestBody CategoryEntity category){
 		categoryService.save(category);
-
         return ResponseVo.ok();
     }
 
@@ -91,7 +95,6 @@ public class CategoryController {
     @ApiOperation("修改")
     public ResponseVo update(@RequestBody CategoryEntity category){
 		categoryService.updateById(category);
-
         return ResponseVo.ok();
     }
 
@@ -102,7 +105,6 @@ public class CategoryController {
     @ApiOperation("删除")
     public ResponseVo delete(@RequestBody List<Long> ids){
 		categoryService.removeByIds(ids);
-
         return ResponseVo.ok();
     }
 

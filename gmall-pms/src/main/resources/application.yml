@@ -1,3 +1,50 @@
+server:
+  port: 18081
 spring:
-  profiles:
-    active: dev
+  rabbitmq:
+    host: 42.192.128.199
+    port: 5672
+    virtual-host: /saberlind
+    username: admin
+    password: admin
+    # 生产者确认：none(不确认) simple(同步阻塞确认,性能不高) correlated(异步监听方式确认)
+    publisher-confirm-type: correlated
+    publisher-returns: true # 确认消息是否到达队列
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+    alibaba:
+      seata:
+        tx-service-group: gmall_tx_group
+  zipkin:
+    base-url: http://localhost:9411
+    discovery-client-enabled: false
+    sender:
+      type: web
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.1.200:3306/guli_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+  redis:
+    #host: 192.168.1.200
+    host: 42.192.128.199
+    port: 6379
+    password: lindonga
+mybatis-plus:
+  mapper-locations: classpath:mapper/pms/**/*.xml
+  type-aliases-package: com.atguigu.gmall.pms.entity
+  global-config:
+    db-config:
+      id-type: auto
+feign:
+  sentinel:
+    enabled: true
+logging:
+  level:
+    com.atguigu.gmall.pms: debug

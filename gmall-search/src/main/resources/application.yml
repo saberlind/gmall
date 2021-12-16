@@ -1,5 +1,44 @@
 server:
   port: 18086
 spring:
-  profiles:
-    active: dev
+  rabbitmq:
+    #host: 42.192.128.199
+    host: 192.168.1.200
+    port: 5672
+    virtual-host: /saberlind
+    username: admin
+    password: admin
+    listener:
+      # simple-listener 容器另开一个线程处理消息
+      # direct-listener（监听器）容器直接使用consumer线程主线程获取消息
+      type: simple
+      simple:
+        # manual-手动确认(代码确认：channel.basicAck/basicNack/basicReject)
+        # auto-自动确认（无异常直接确认，有异常无限重试） none-不确认模式
+        acknowledge-mode: manual
+        prefetch: 1 # 能者多劳
+        concurrency: 3 # 避免消息堆积，初始化多个消费者线程
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+  zipkin:
+    base-url: http://localhost:9411
+    discovery-client-enabled: false
+    sender:
+      type: web
+  elasticsearch:
+    rest:
+      #uris: http://192.168.1.200:9200
+      uris: http://42.192.128.199:9200
+  jackson:
+    default-property-inclusion: non_null
+  thymeleaf:
+    cache: false
+feign:
+  sentinel:
+    enabled: true

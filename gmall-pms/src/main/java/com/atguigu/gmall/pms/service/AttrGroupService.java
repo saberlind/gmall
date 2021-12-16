@@ -1,6 +1,7 @@
 package com.atguigu.gmall.pms.service;
 
 import com.atguigu.gmall.pms.vo.GroupVo;
+import com.atguigu.gmall.pms.vo.ItemGroupVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gmall.common.bean.PageResultVo;
 import com.atguigu.gmall.common.bean.PageParamVo;
@@ -23,5 +24,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     List<AttrGroupEntity> queryAttrGroupByCid(Long cid);
 
     List<GroupVo> queryByCid(Long cid);
+
+    List<ItemGroupVo> queryGroupWithAttrAndValueByCidAndSpuIdAndSkuId(Long cid, Long spuId, Long skuId);
 }
 

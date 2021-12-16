@@ -18,10 +18,12 @@ public class CorsConfig {
         // 初始化一个配置对象
         CorsConfiguration configuration = new CorsConfiguration();
         // 允许跨域访问的域名。*-允许所有，建议不要写*,原因：1-不够安全  2-不能携带cookie
-        configuration.addAllowedOrigin("http://api.saberlind.club");
-        configuration.addAllowedOrigin("http://man.saberlind.club");
-        configuration.addAllowedOrigin("http://api.gmall.com");
-        configuration.addAllowedOrigin("http://index.saberlind.club");
+        configuration.addAllowedOrigin("http://manager.gmall.com");
+        configuration.addAllowedOrigin("http://localhost:1000");
+        configuration.addAllowedOrigin("http://www.gmall.com");
+        configuration.addAllowedOrigin("http://gmall.com");
+        //configuration.addAllowedOrigin("http://item.gmall.com");
+        //configuration.addAllowedOrigin("http://static.gmall.com");
         // 允许跨域访问的方法
         configuration.addAllowedMethod("*");
         // 允许携带的请求头消息

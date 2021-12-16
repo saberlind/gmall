@@ -8,8 +8,8 @@ import com.atguigu.gmall.index.utils.DistributedLock;
 import com.atguigu.gmall.pms.entity.CategoryEntity;
 import io.swagger.models.auth.In;
 import org.apache.commons.lang.StringUtils;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
+import org.redisson.RedissonRedLock;
+import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * @author saberlin
@@ -172,6 +173,80 @@ public class IndexService {
             this.redisTemplate.opsForValue().set("num",String.valueOf(++num));
         } finally {
             lock.unlock();
+        }
+    }
+
+    public String testReentrantLock() throws InterruptedException {
+        RLock lock = redissonClient.getLock("anyLock");
+        lock.lock();
+
+        boolean res = lock.tryLock(100, 10, TimeUnit.SECONDS);
+        if (res){
+            try {
+                return "ok";
+            }finally {
+                lock.unlock();
+            }
+        }else {
+            return "false";
+        }
+    }
+
+    public void testReadLock() throws InterruptedException {
+        RReadWriteLock rwLock = this.redissonClient.getReadWriteLock("anyRWLock");
+        // 最常见的使用方法
+        rwLock.readLock().lock(5,TimeUnit.SECONDS);
+        // TODO 业务
+        // rwLock.writeLock().unlock
+    }
+    public void testWriteLock() throws InterruptedException {
+        RReadWriteLock rwLock = this.redissonClient.getReadWriteLock("anyRWLock");
+        // 最常见的使用方法
+        rwLock.writeLock().lock(5,TimeUnit.SECONDS);
+        // TODO 业务
+        // rwLock.writeLock().unlock
+    }
+
+    public void testRedLock(){
+        RLock redLock1 = this.redissonClient.getLock("lock1");
+        RLock redLock2 = this.redissonClient.getLock("lock2");
+        RLock redLock3 = this.redissonClient.getLock("lock3");
+        RedissonRedLock redissonRedLock = new RedissonRedLock(redLock1, redLock2, redLock3);
+        // 同时加锁，lock1,lock2,lock3
+        // 红锁在大部分节点上加锁成功就算成功
+        redissonRedLock.lock();
+        // TODO 业务
+        // lock.unlock();
+    }
+
+    public void testSemaphore1() throws InterruptedException {
+        RSemaphore semaphore = this.redissonClient.getSemaphore("semaphore");
+        try {
+            semaphore.acquire();
+        } finally {
+            semaphore.release();
+        }
+    }
+
+    public void testSemaphore2() throws InterruptedException {
+        RSemaphore semaphore = this.redissonClient.getSemaphore("semaphore");
+        semaphore.tryAcquire(10,TimeUnit.SECONDS);
+    }
+
+    public void testCountDown(){
+        RCountDownLatch countDownLatch = this.redissonClient.getCountDownLatch("countDownLatch");
+        countDownLatch.countDown();
+        System.out.println("出来一个人");
+    }
+
+    public void testLatch(){
+        RCountDownLatch countDownLatch = this.redissonClient.getCountDownLatch("countDownLatch");
+        try {
+            countDownLatch.trySetCount(6);
+            countDownLatch.await();
+            System.out.println("关门了。。。。。");
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

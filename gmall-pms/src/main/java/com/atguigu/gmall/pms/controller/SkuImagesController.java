@@ -34,6 +34,12 @@ public class SkuImagesController {
     @Autowired
     private SkuImagesService skuImagesService;
 
+    @GetMapping("images/{skuId}")
+    public ResponseVo<List<SkuImagesEntity>> querySkuImagesBySkuId(@PathVariable("skuId")Long skuId){
+        List<SkuImagesEntity> skuImagesEntities = this.skuImagesService.querySkuImagesBySkuId(skuId);
+        return ResponseVo.ok(skuImagesEntities);
+    }
+
     /**
      * 列表
      */
