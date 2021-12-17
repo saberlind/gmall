@@ -1,0 +1,30 @@
+server:
+  port: 18089
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+  zipkin:
+    base-url: http://localhost:9411
+    discovery-client-enabled: false
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1
+feign:
+  sentinel:
+    enabled: true
+auth:
+  jwt:
+    pubKeyPath: D:\at_Java\rsa\rsa.pub
+    priKeyPath: D:\at_Java\rsa\rsa.pri
+    secret: 30489ouerweljrLROE@#)(@$*343jl
+    expire: 360
+    cookieName: GMALL-TOKEN
+    unick: unick

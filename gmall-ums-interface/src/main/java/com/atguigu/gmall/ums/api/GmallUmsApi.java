@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface GmallUmsApi {
 
     @GetMapping("ums/user/query")
-    public ResponseVo queryUser(
+    public ResponseVo<UserEntity> queryUser(
             @RequestParam("loginName")String loginName,
             @RequestParam("password")String password
     );

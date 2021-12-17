@@ -45,3 +45,14 @@ spring:
           uri: lb://item-service
           predicates:
             - Host=item.gmall.com
+        - id: auth-route          # 单点登录路由
+          uri: lb://auth-service
+          predicates:
+            - Host=sso.gmall.com
+          filters:
+            #- Auth=/toLogin.html,/login
+            - Auth=/xxx,/yyy,/zzz
+auth:
+  jwt:
+    pubKeyPath: D:\at_Java\rsa\rsa.pub
+    cookieName: GMALL-TOKEN

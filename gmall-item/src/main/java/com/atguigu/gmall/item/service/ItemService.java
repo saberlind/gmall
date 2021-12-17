@@ -167,7 +167,6 @@ public class ItemService {
         });
         return itemVo;
     }
-
     private void generateHtml(ItemVo itemVo){
         executorService.execute(()->{
             try (PrintWriter printWriter = new PrintWriter("E:\\atguigu_Java\\generator\\" + itemVo.getSkuId() + ".html")) {

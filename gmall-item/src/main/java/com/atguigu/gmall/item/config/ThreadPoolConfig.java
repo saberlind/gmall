@@ -11,7 +11,6 @@ import java.util.concurrent.*;
  */
 @Configuration
 public class ThreadPoolConfig {
-
     @Bean
     public ExecutorService executorService(){
         return new ThreadPoolExecutor(100,200,600, TimeUnit.SECONDS,

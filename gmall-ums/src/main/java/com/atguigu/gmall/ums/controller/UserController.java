@@ -36,7 +36,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("query")
-    public ResponseVo queryUser(
+    public ResponseVo<UserEntity> queryUser(
             @RequestParam("loginName")String loginName,
             @RequestParam("password")String password
     ){

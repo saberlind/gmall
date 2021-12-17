@@ -18,7 +18,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient(){
         Config config = new Config();
         // 可以用“redis://“来启用SSL链接
-        config.useSingleServer().setAddress("redis://42.192.128.199:6379").setPassword("lindonga");
+        config.useSingleServer().setAddress("redis://192.168.1.200:6379").setPassword("lindonga");
         return Redisson.create(config);
     }
 }
