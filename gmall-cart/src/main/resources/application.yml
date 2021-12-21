@@ -1,0 +1,70 @@
+server:
+  port: 18090
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+  zipkin:
+    base-url: http://localhost:9411
+    discovery-client-enabled: false
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.1.200:3306/guli_cart?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+  redis:
+    #host: 192.168.1.200
+    host: 42.192.128.199
+    port: 6379
+    password: lindonga
+  thymeleaf:
+    cache: false
+  task:
+    # Spring 执行器配置，对应 TaskExecutionProperties 配置类。对于 Spring 异步任务，会使用该执行器
+    execution:
+      thread-name-prefix: gmall-task-
+      pool:
+        core-size: 8 # 核心线程数，线程池创建时候初始化的线程数。默认为 8 。
+        max-size: 20 # 最大线程数，线程池最大的线程数，只有在缓冲队列满了之后，才会申请超过核心线程数的线程。默认为 Integer.MAX_VALUE
+        keep-alive: 60s # 允许线程的空闲时间，当超过了核心线程之外的线程，在空闲时间到达之后会被销毁。默认为 60 秒
+        queue-capacity: 200 # 缓冲队列大小，用来缓冲执行任务的队列的大小。默认为 Integer.MAX_VALUE 。
+        allow-core-thread-timeout: true # 是否允许核心线程超时，即开启线程池的动态增长和缩小。默认为 true 。
+      shutdown:
+        await-termination: true # 应用关闭时，是否等待定时任务执行完成。默认为 false ，建议设置为 true
+        await-termination-period: 60 # 等待任务完成的最大时长，单位为秒。默认为 0 ，根据自己应用来设置
+  rabbitmq:
+    host: 42.192.128.199
+    port: 5672
+    virtual-host: /saberlind
+    username: admin
+    password: admin
+    listener:
+      simple:
+        acknowledge-mode: manual
+        concurrency: 4
+        prefetch: 1
+mybatis-plus:
+  mapper-locations: classpath:mapper/cart/**/*.xml
+  type-aliases-package: com.atguigu.gmall.cart.entity
+  global-config:
+    db-config:
+      id-type: auto
+feign:
+  sentinel:
+    enabled: true
+auth:
+  jwt:
+    pubKeyPath: D:\at_Java\rsa\rsa.pub
+    cookieName: GMALL-TOKEN
+    expire: 15552000
+    userKey: user-key

@@ -21,7 +21,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.io.PipedReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthG
     private JwtProperties jwtProperties;
 
     /**
-     * 指定字段顺序
+     * 指定接收参数字段顺序
      * filters:
      *   - Auth=/xxx,/yyy,/zzz
      * 可以通过不同的字段分别读取：/xxx,/yyy,/zzz
@@ -47,6 +46,7 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthG
      */
     @Override
     public List<String> shortcutFieldOrder() {
+        // return Arrays.asList("value","key");  倒序
         return Arrays.asList("keys");
     }
 
@@ -76,8 +76,9 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthG
                 ServerHttpResponse response = exchange.getResponse();
 
                 // 1.判断当前请求路径在不在名单中，不在直接放行
+                List<String> keys = config.getKeys();
                 String path = request.getURI().getPath();
-                if (config.keys.stream().allMatch(authPath -> path.indexOf(authPath) == -1)){
+                if (keys.stream().allMatch(key -> path.indexOf(key) == -1)){
                     return chain.filter(exchange);
                 }
                 // 2.获取token信息：同步请求cookie中获取，异步请求头信息中获取
@@ -115,7 +116,7 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthG
                         return response.setComplete();
                     }
 
-                    // 6.传递登录信息给后续的服务，不需要再次解析jwt
+                    // 6.传递登录信息给后续的服务，不需要再次解析jwt(因为解析jwt非常耗时，尽量少解析)
                     // 将userId转变成request对象。mutate：转变的意思
                     request.mutate().header("userId",map.get("userId").toString()).build();
                     // 将新的request对象那个转变成exchange对象

@@ -48,7 +48,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public void register(UserEntity userEntity, String code) {
         // TODO 1.校验短信验证码，手机号获取redis中的验证码
-
         // 2.生成盐
         String uuid = UUID.randomUUID().toString();
         String salt = StringUtils.substring(uuid, 0, 6);
