@@ -24,6 +24,19 @@ spring:
     host: 42.192.128.199
     port: 6379
     password: lindonga
+  rabbitmq:
+    host: 42.192.128.199
+    port: 5672
+    virtual-host: /saberlind
+    username: admin
+    password: admin
+    listener:
+      simple:
+        prefetch: 1
+        acknowledge-mode: manual
+        concurrency: 4
+    publisher-confirm-type: correlated
+    publisher-returns: true
 feign:
   sentinel:
     enabled: true

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.index.annotation.GmallCache;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -13,13 +12,10 @@ import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.io.PipedReader;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -80,7 +76,7 @@ public class GmallCacheAspect {
         if (StringUtils.isNotBlank(json)){
             return JSON.parseObject(json,returnType);
         }
-        // 为2.了防止缓存击穿，添加分布式锁
+        // 2.为了防止缓存击穿，添加分布式锁
         RLock fairLock = this.redissonClient.getFairLock(gmallCache.lock() + param);
         fairLock.lock();
         try {

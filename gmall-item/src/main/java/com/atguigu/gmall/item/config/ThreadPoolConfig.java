@@ -13,7 +13,7 @@ import java.util.concurrent.*;
 public class ThreadPoolConfig {
     @Bean
     public ExecutorService executorService(){
-        return new ThreadPoolExecutor(100,200,600, TimeUnit.SECONDS,
+        return new ThreadPoolExecutor(40,200,600, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(1000), Executors.defaultThreadFactory(),
                 (Runnable r, ThreadPoolExecutor executor)->{
                     System.out.println("异步任务失败");

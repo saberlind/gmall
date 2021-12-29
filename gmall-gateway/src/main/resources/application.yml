@@ -37,7 +37,7 @@ spring:
           predicates:
             - Host=www.gmall.com, gmall.com
           filters:
-            - Auth=/xxx,/yyy,/zzz
+            - Auth=/
             #- AddResponseHeader=xxx,yyy  #添加响应头信息，浏览器可以看,多个参数时，只有前面两个生效
             #- Path=/index/**  如果写在一个里面，他们的关系是and关系
         - id: index-route2
@@ -52,10 +52,16 @@ spring:
           uri: lb://auth-service
           predicates:
             - Host=sso.gmall.com
-        - id: cart-route          # 单点登录路由
+        - id: cart-route
           uri: lb://cart-service
           predicates:
             - Host=cart.gmall.com
+        - id: order-route
+          uri: lb://order-service
+          predicates:
+            - Host=order.gmall.com
+          filters:
+            - Auth=/
 auth:
   jwt:
     pubKeyPath: D:\at_Java\rsa\rsa.pub

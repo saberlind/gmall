@@ -19,7 +19,7 @@ public class CartAsyncService {
 
     @Async
     public void updateCartByUserIdAndSkuId(String userId,String skuId,Cart cart){
-        int i = 1/0;
+        //int i = 1/0;
         this.cartMapper.update(cart,new UpdateWrapper<Cart>().eq("user_id",userId).eq("sku_id",skuId));
     }
 

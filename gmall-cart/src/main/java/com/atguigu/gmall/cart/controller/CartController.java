@@ -23,6 +23,13 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    @GetMapping("user/{userId}")
+    @ResponseBody
+    public ResponseVo<List<Cart>> queryCheckedCartsByUserId(@PathVariable("userId")Long userId){
+        List<Cart> carts = this.cartService.queryCheckedCartsByUserId(userId);
+        return ResponseVo.ok(carts);
+    }
+
     /**
      * 添加购物车成功，重定向到购物车成功页
      */
