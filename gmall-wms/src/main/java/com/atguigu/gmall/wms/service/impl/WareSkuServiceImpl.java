@@ -84,7 +84,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuMapper, WareSkuEntity
         this.redisTemplate.opsForValue().set(KEY_PREFIX + orderToken,JSON.toJSONString(lockVos));
 
         // 防止锁定库存后服务器宕机，导致库存一直被锁。
-        // TODO 定时解锁库存，发送延时消息
+        // 定时解锁库存，发送延时消息
         this.rabbitTemplate.convertAndSend("ORDER_EXCHANGE","stock.ttl",orderToken);
         // 都锁定成功，返回null
         return null;

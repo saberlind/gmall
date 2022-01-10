@@ -201,6 +201,7 @@ public class CartService {
         // 获取登录状态购物车
         BoundHashOperations<String, Object, Object> loginHashOps = this.redisTemplate.boundHashOps(loginKey);
         if (!CollectionUtils.isEmpty(unLoginCarts)){
+            // 遍历未登录购物车合并
             unLoginCarts.forEach(cart -> {
                 try{
                     // 登录状态购物车已存在该商品，更新数量

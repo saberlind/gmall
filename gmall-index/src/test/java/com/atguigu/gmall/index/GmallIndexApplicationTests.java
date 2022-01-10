@@ -8,11 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-@SpringBootTest
+//@SpringBootTest
 class GmallIndexApplicationTests {
 
     @Autowired
@@ -84,5 +82,16 @@ class GmallIndexApplicationTests {
         System.out.println(bloom.contains("14"));
         System.out.println(bloom.contains("15"));
         System.out.println(bloom.contains("16"));
+    }
+
+
+    @Test
+    public void test1(){
+        String a = "aaa";
+        String b = a;
+        System.out.println(b);
+        b = "bbb";
+        System.out.println(b);
+        System.out.println(a);
     }
 }

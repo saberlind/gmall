@@ -65,7 +65,7 @@ public class CartJobHandler {
             });
 
             // 获取下一个
-            userId = setOps.pop();
+            userId = setOps.pop( );
         }
         return ReturnT.SUCCESS;
     }

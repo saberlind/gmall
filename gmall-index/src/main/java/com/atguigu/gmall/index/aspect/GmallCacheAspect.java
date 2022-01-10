@@ -44,7 +44,7 @@ public class GmallCacheAspect {
 
     /**
      * 1.必须返回Object对象
-     * 2.必须有一个ProceedingJoinPoint
+     * 2.必须有一个ProceedingJoinPoint     k
      * 3.必须抛出一个Throwable异常
      * 4.必须手动执行目标方法
      */

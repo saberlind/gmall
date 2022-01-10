@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.*;
 
 /**
  * @author saberlin
@@ -24,7 +24,14 @@ public class AsyncConfig implements AsyncConfigurer {
      */
     @Override
     public Executor getAsyncExecutor() {
-        return null;
+        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(40, 100, 60, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(1000), Executors.defaultThreadFactory(), new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                throw new RuntimeException("异步任务执行失败");
+            }
+        });
+        return threadPool;
     }
 
     /**

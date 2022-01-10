@@ -104,7 +104,6 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthG
                 try {
                     // 4.解析jwt,有异常直接拦截
                     Map<String, Object> map = JwtUtils.getInfoFromToken(token, jwtProperties.getPublicKey());
-
                     // 5.判断ip
                     String ip = map.get("ip").toString();
                     String curIp = IpUtils.getIpAddressAtGateway(request);
@@ -119,7 +118,7 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthG
                     // 6.传递登录信息给后续的服务，不需要再次解析jwt(因为解析jwt非常耗时，尽量少解析)
                     // 将userId转变成request对象。mutate：转变的意思
                     request.mutate().header("userId",map.get("userId").toString()).build();
-                    // 将新的request对象那个转变成exchange对象
+                    // 将新的request对象转变成exchange对象
                     exchange.mutate().request(request).build();
                 }catch (Exception e){
                     e.printStackTrace();
